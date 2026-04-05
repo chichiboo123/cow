@@ -1,0 +1,21 @@
+{
+  "appTitle": "COW",
+  "appSubtitle": "Colors of the World",
+  "appKoreanName": "세상의 모든 색깔",
+  "uploadPrompt": "画像をアップロードまたはクリップボードから貼り付け",
+  "uploadHint": "ドラッグ＆ドロップ、クリックで選択、またはCtrl+V",
+  "dropHere": "ここに画像をドロップ",
+  "processing": "処理中...",
+  "numColors": "色の数",
+  "copyHex": "HEXをコピー",
+  "copyRgb": "RGBをコピー",
+  "copied": "コピーしました！",
+  "invalidFile": "有効な画像ファイルをアップロードしてください",
+  "darkMode": "ダークモード",
+  "lightMode": "ライトモード",
+  "extractColors": "色を抽出",
+  "noImageSelected": "画像が選択されていません",
+  "pasteImage": "画像を貼り付け",
+  "browseFile": "ファイルを選択",
+  "supportedFormats": "対応形式: PNG, JPG, JPEG, WEBP, GIF"
+}
