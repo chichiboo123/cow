@@ -1,6 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import './i18n'
 import { ImageUploader } from './components/ImageUploader'
 import { ColorPalette } from './components/ColorPalette'
 import { LanguageSwitcher } from './components/LanguageSwitcher'

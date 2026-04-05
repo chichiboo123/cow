@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - claude/build-cow-app-yKb7m
+  workflow_dispatch:
 
 permissions:
   contents: read
