@@ -1,18 +1,21 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { RGBColor } from '../hooks/useColorExtraction'
+import { rgbToCmyk, rgbToPantoneApprox, type ExtractedColor } from '../hooks/useColorExtraction'
 
 interface ColorCardProps {
-  color: RGBColor
+  color: ExtractedColor
   rgbToHex: (r: number, g: number, b: number) => string
+  showExtended: boolean
 }
 
-export function ColorCard({ color, rgbToHex }: ColorCardProps) {
+export function ColorCard({ color, rgbToHex, showExtended }: ColorCardProps) {
   const { t } = useTranslation()
   const [copiedType, setCopiedType] = useState<'hex' | 'rgb' | null>(null)
 
   const hex = rgbToHex(color.r, color.g, color.b)
   const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`
+  const cmyk = rgbToCmyk(color.r, color.g, color.b)
+  const pantoneApprox = rgbToPantoneApprox(color.r, color.g, color.b)
 
   // Determine text color based on luminance
   const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255
@@ -52,6 +55,19 @@ export function ColorCard({ color, rgbToHex }: ColorCardProps) {
         <span className={`text-xs leading-tight ${textClass} opacity-80`}>
           {rgb}
         </span>
+        <span className={`text-xs leading-tight ${textClass} opacity-90`}>
+          {t('percentage')}: {color.percentage.toFixed(2)}%
+        </span>
+        {showExtended && (
+          <>
+            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
+              CMYK: {cmyk.c}% {cmyk.m}% {cmyk.y}% {cmyk.k}%
+            </span>
+            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
+              {t('pantoneApprox')}: {pantoneApprox}
+            </span>
+          </>
+        )}
         <div className="flex gap-1 mt-1">
           <button
             onClick={() => copy(hex, 'hex')}

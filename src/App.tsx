@@ -62,7 +62,7 @@ function App() {
   const visibleError = errorKey ?? error
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
@@ -119,13 +119,13 @@ function App() {
             {t('appPrimaryName')}
           </h1>
           <p className="text-base sm:text-xl font-medium text-gray-600 dark:text-gray-400 mt-1">
-            {t('appSecondaryName')}
+            {t('appHeroSubtitle')}
           </p>
         </div>
       </div>
 
       {/* Main content */}
-      <main className="max-w-5xl mx-auto px-4 pb-16 space-y-6">
+      <main className="w-full max-w-5xl mx-auto px-4 pb-16 space-y-6 flex-1">
         {/* Image uploader */}
         <ImageUploader
           onImage={handleImage}
@@ -181,7 +181,7 @@ function App() {
         <ColorPalette colors={colors} isLoading={isLoading} rgbToHex={rgbToHex} />
       </main>
 
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-6">
+      <footer className="mt-auto border-t border-gray-200 dark:border-gray-800 py-6 bg-white/70 dark:bg-gray-900/70">
         <div className="max-w-5xl mx-auto px-4 text-center">
           <a
             href="https://litt.ly/chichiboo"
