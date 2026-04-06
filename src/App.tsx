@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ImageUploader } from './components/ImageUploader'
 import { ColorPalette } from './components/ColorPalette'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
-import { useColorExtraction } from './hooks/useColorExtraction'
+import { useColorExtraction, type ExtractedColor } from './hooks/useColorExtraction'
 
 function App() {
   const { t } = useTranslation()
@@ -14,6 +14,8 @@ function App() {
   })
   const [numColors, setNumColors] = useState(8)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [focusedPreviewUrl, setFocusedPreviewUrl] = useState<string | null>(null)
+  const [selectedColorHex, setSelectedColorHex] = useState<string | null>(null)
   const [currentImg, setCurrentImg] = useState<HTMLImageElement | null>(null)
   const [errorKey, setErrorKey] = useState<string | null>(null)
 
@@ -31,6 +33,8 @@ function App() {
   const handleImage = useCallback((img: HTMLImageElement) => {
     setCurrentImg(img)
     setErrorKey(null)
+    setFocusedPreviewUrl(null)
+    setSelectedColorHex(null)
     extractColors(img, numColors)
   }, [extractColors, numColors])
 
@@ -42,6 +46,8 @@ function App() {
   const handleNumColorsChange = (value: number) => {
     const clamped = Math.max(1, Math.min(20, value))
     setNumColors(clamped)
+    setSelectedColorHex(null)
+    setFocusedPreviewUrl(null)
     if (currentImg) {
       extractColors(currentImg, clamped)
     }
@@ -51,6 +57,8 @@ function App() {
     setPreviewUrl(null)
     setCurrentImg(null)
     setErrorKey(null)
+    setFocusedPreviewUrl(null)
+    setSelectedColorHex(null)
     setNumColors(8)
     reset()
   }, [reset])
@@ -60,6 +68,46 @@ function App() {
   }, [])
 
   const visibleError = errorKey ?? error
+  const displayPreviewUrl = focusedPreviewUrl ?? previewUrl
+
+  const handleColorSelect = useCallback((color: ExtractedColor) => {
+    if (!currentImg) return
+
+    const hex = rgbToHex(color.r, color.g, color.b)
+    if (selectedColorHex === hex) {
+      setSelectedColorHex(null)
+      setFocusedPreviewUrl(null)
+      return
+    }
+
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })
+    if (!ctx) return
+
+    canvas.width = currentImg.naturalWidth
+    canvas.height = currentImg.naturalHeight
+    ctx.drawImage(currentImg, 0, 0, canvas.width, canvas.height)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    const data = imageData.data
+
+    const threshold = 70
+    for (let i = 0; i < data.length; i += 4) {
+      const dr = data[i] - color.r
+      const dg = data[i + 1] - color.g
+      const db = data[i + 2] - color.b
+      const distance = Math.sqrt(dr * dr + dg * dg + db * db)
+      if (distance > threshold) {
+        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
+        data[i] = gray
+        data[i + 1] = gray
+        data[i + 2] = gray
+      }
+    }
+
+    ctx.putImageData(imageData, 0, 0)
+    setSelectedColorHex(hex)
+    setFocusedPreviewUrl(canvas.toDataURL('image/png'))
+  }, [currentImg, rgbToHex, selectedColorHex])
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
@@ -130,7 +178,7 @@ function App() {
         <ImageUploader
           onImage={handleImage}
           onError={handleError}
-          previewUrl={previewUrl}
+          previewUrl={displayPreviewUrl}
           setPreviewUrl={setPreviewUrl}
         />
 
@@ -178,7 +226,13 @@ function App() {
         )}
 
         {/* Color palette */}
-        <ColorPalette colors={colors} isLoading={isLoading} rgbToHex={rgbToHex} />
+        <ColorPalette
+          colors={colors}
+          isLoading={isLoading}
+          rgbToHex={rgbToHex}
+          selectedColorHex={selectedColorHex}
+          onColorSelect={handleColorSelect}
+        />
       </main>
 
       <footer className="mt-auto border-t border-gray-200 dark:border-gray-800 py-6 bg-white/70 dark:bg-gray-900/70">

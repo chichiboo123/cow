@@ -29,5 +29,13 @@
   "sortByPercentage": "Highest percentage",
   "sortBySimilar": "Group similar colors",
   "showExtended": "Show details",
-  "hideExtended": "Hide details"
+  "hideExtended": "Hide details",
+  "language": "Language",
+  "cardMaker": "Card Maker",
+  "cardModeOn": "Pick card color",
+  "cardText": "Card text",
+  "font": "Font",
+  "fontColor": "Text color",
+  "fontSize": "Text size",
+  "dragHint": "Drag the card text to reposition it."
 }

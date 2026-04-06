@@ -6,9 +6,11 @@ interface ColorCardProps {
   color: ExtractedColor
   rgbToHex: (r: number, g: number, b: number) => string
   showExtended: boolean
+  isActive?: boolean
+  onSelect?: (color: ExtractedColor) => void
 }
 
-export function ColorCard({ color, rgbToHex, showExtended }: ColorCardProps) {
+export function ColorCard({ color, rgbToHex, showExtended, isActive = false, onSelect }: ColorCardProps) {
   const { t } = useTranslation()
   const [copiedType, setCopiedType] = useState<'hex' | 'rgb' | null>(null)
 
@@ -44,8 +46,9 @@ export function ColorCard({ color, rgbToHex, showExtended }: ColorCardProps) {
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end"
+      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end cursor-pointer border-2 ${isActive ? 'border-violet-400' : 'border-transparent'}`}
       style={{ backgroundColor: hex }}
+      onClick={() => onSelect?.(color)}
     >
       {/* Color info overlay */}
       <div className="p-3 flex flex-col gap-1">
@@ -70,7 +73,11 @@ export function ColorCard({ color, rgbToHex, showExtended }: ColorCardProps) {
         )}
         <div className="flex gap-1 mt-1">
           <button
-            onClick={() => copy(hex, 'hex')}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              copy(hex, 'hex')
+            }}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
@@ -79,7 +86,11 @@ export function ColorCard({ color, rgbToHex, showExtended }: ColorCardProps) {
             <span>{copiedType === 'hex' ? t('copied') : t('copyHex')}</span>
           </button>
           <button
-            onClick={() => copy(rgb, 'rgb')}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              copy(rgb, 'rgb')
+            }}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
