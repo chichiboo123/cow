@@ -1,7 +1,9 @@
 {
-  "appTitle": "COW",
-  "appSubtitle": "Colors of the World",
+  "appTitle": "All the Colors of the World",
+  "appSubtitle": "COW",
   "appKoreanName": "세상의 모든 색깔",
+  "appPrimaryName": "All the Colors of the World",
+  "appSecondaryName": "COW",
   "uploadPrompt": "Upload an image or paste from clipboard",
   "uploadHint": "Drag & drop, click to browse, or press Ctrl+V",
   "dropHere": "Drop image here",
@@ -17,5 +19,7 @@
   "noImageSelected": "No image selected",
   "pasteImage": "Paste image",
   "browseFile": "Browse file",
-  "supportedFormats": "Supported: PNG, JPG, JPEG, WEBP, GIF"
+  "supportedFormats": "Supported: PNG, JPG, JPEG, WEBP, GIF",
+  "reset": "Reset",
+  "refreshPage": "Refresh page"
 }
