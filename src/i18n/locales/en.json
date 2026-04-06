@@ -24,7 +24,7 @@
   "reset": "Reset",
   "refreshPage": "Refresh page",
   "percentage": "Percentage",
-  "pantoneApprox": "Pantone (Approx.)",
+
   "sortBy": "Sort",
   "sortByPercentage": "Highest percentage",
   "sortBySimilar": "Group similar colors",
@@ -37,5 +37,11 @@
   "font": "Font",
   "fontColor": "Text color",
   "fontSize": "Text size",
-  "dragHint": "Drag the card text to reposition it."
+  "dragHint": "Drag the card text to reposition it.",
+  "fontPreview": "Font preview",
+  "showColorCodeOnCard": "Show color code on card",
+  "downloadJpg": "Download JPG",
+  "downloaded": "Downloaded!",
+  "copyCardToClipboard": "Copy to clipboard",
+  "copiedToClipboard": "Copied!"
 }

@@ -24,7 +24,7 @@
   "reset": "リセット",
   "refreshPage": "ページを更新",
   "percentage": "比率",
-  "pantoneApprox": "PANTONE（近似）",
+
   "sortBy": "並び替え",
   "sortByPercentage": "比率が高い順",
   "sortBySimilar": "近い色ごと",
@@ -37,5 +37,11 @@
   "font": "フォント",
   "fontColor": "文字色",
   "fontSize": "文字サイズ",
-  "dragHint": "カードの文字はドラッグで移動できます。"
+  "dragHint": "カードの文字はドラッグで移動できます。",
+  "fontPreview": "フォントプレビュー",
+  "showColorCodeOnCard": "カードにカラーコードを表示",
+  "downloadJpg": "JPGダウンロード",
+  "downloaded": "ダウンロード完了！",
+  "copyCardToClipboard": "クリップボードにコピー",
+  "copiedToClipboard": "コピー完了！"
 }

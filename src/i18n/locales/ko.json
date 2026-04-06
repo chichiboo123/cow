@@ -24,7 +24,7 @@
   "reset": "초기화",
   "refreshPage": "페이지 새로고침",
   "percentage": "비율",
-  "pantoneApprox": "펜톤(근사값)",
+
   "sortBy": "정렬",
   "sortByPercentage": "비율 높은 순",
   "sortBySimilar": "비슷한 색끼리",
@@ -37,5 +37,11 @@
   "font": "폰트",
   "fontColor": "글자 색상",
   "fontSize": "글자 크기",
-  "dragHint": "카드 텍스트를 드래그해서 위치를 이동할 수 있어요."
+  "dragHint": "카드 텍스트를 드래그해서 위치를 이동할 수 있어요.",
+  "fontPreview": "폰트 미리보기",
+  "showColorCodeOnCard": "카드에 색상코드 표시",
+  "downloadJpg": "JPG 다운로드",
+  "downloaded": "다운로드 완료!",
+  "copyCardToClipboard": "클립보드 복사",
+  "copiedToClipboard": "복사 완료!"
 }

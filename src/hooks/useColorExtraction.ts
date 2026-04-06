@@ -36,43 +36,6 @@ export function rgbToCmyk(r: number, g: number, b: number) {
   }
 }
 
-interface PantoneCandidate {
-  code: string
-  r: number
-  g: number
-  b: number
-}
-
-const PANTONE_APPROX: PantoneCandidate[] = [
-  { code: 'Pantone 186 C', r: 200, g: 16, b: 46 },
-  { code: 'Pantone 021 C', r: 254, g: 80, b: 0 },
-  { code: 'Pantone 123 C', r: 255, g: 199, b: 44 },
-  { code: 'Pantone 361 C', r: 67, g: 176, b: 42 },
-  { code: 'Pantone 3005 C', r: 0, g: 132, b: 201 },
-  { code: 'Pantone 072 C', r: 16, g: 6, b: 159 },
-  { code: 'Pantone 2592 C', r: 147, g: 39, b: 143 },
-  { code: 'Pantone Cool Gray 11 C', r: 83, g: 86, b: 90 },
-  { code: 'Pantone Black C', r: 45, g: 41, b: 38 },
-  { code: 'Pantone White', r: 245, g: 245, b: 240 },
-]
-
-export function rgbToPantoneApprox(r: number, g: number, b: number): string {
-  let nearest = PANTONE_APPROX[0]
-  let minDistance = Number.POSITIVE_INFINITY
-
-  for (const candidate of PANTONE_APPROX) {
-    const dr = r - candidate.r
-    const dg = g - candidate.g
-    const db = b - candidate.b
-    const distance = dr * dr + dg * dg + db * db
-    if (distance < minDistance) {
-      minDistance = distance
-      nearest = candidate
-    }
-  }
-
-  return nearest.code
-}
 
 function getColorGroup(r: number, g: number, b: number): string {
   const max = Math.max(r, g, b)
