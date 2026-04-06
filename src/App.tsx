@@ -47,29 +47,59 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    if (error) setErrorKey(error)
-  }, [error])
+  const handleReset = useCallback(() => {
+    setPreviewUrl(null)
+    setCurrentImg(null)
+    setErrorKey(null)
+    setNumColors(8)
+    reset()
+  }, [reset])
+
+  const handleReload = useCallback(() => {
+    window.location.reload()
+  }, [])
+
+  const visibleError = errorKey ?? error
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleReload}
+            className="flex items-center gap-2 cursor-pointer"
+            title={t('refreshPage')}
+          >
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-sm">
               <span className="material-icons text-white" style={{ fontSize: 18 }}>palette</span>
             </div>
-            <span className="font-bold text-lg bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-              COW
-            </span>
-          </div>
+            <div className="flex items-baseline gap-2">
+              <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-gray-100">
+                {t('appPrimaryName')}
+              </span>
+              <span className="font-semibold text-xs sm:text-sm bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+                {t('appSecondaryName')}
+              </span>
+            </div>
+          </button>
 
           {/* Controls */}
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <button
+              type="button"
+              onClick={handleReset}
+              title={t('reset')}
+              className="px-3 h-9 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-semibold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors"
+            >
+              <span className="material-icons" style={{ fontSize: 18 }}>restart_alt</span>
+              <span>{t('reset')}</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setDarkMode(d => !d)}
               title={darkMode ? t('lightMode') : t('darkMode')}
               className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -86,19 +116,16 @@ function App() {
       <div className="max-w-5xl mx-auto px-4 pt-10 pb-6 text-center">
         <div className="inline-flex flex-col items-center gap-1">
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-transparent leading-tight">
-            {t('appTitle')}
+            {t('appPrimaryName')}
           </h1>
           <p className="text-base sm:text-xl font-medium text-gray-600 dark:text-gray-400 mt-1">
-            {t('appSubtitle')}
-          </p>
-          <p className="text-sm text-gray-400 dark:text-gray-600 font-light">
-            {t('appKoreanName')}
+            {t('appHeroSubtitle')}
           </p>
         </div>
       </div>
 
       {/* Main content */}
-      <main className="max-w-5xl mx-auto px-4 pb-16 space-y-6">
+      <main className="w-full max-w-5xl mx-auto px-4 pb-16 space-y-6 flex-1">
         {/* Image uploader */}
         <ImageUploader
           onImage={handleImage}
@@ -108,10 +135,10 @@ function App() {
         />
 
         {/* Error message */}
-        {errorKey && (
+        {visibleError && (
           <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm">
             <span className="material-icons" style={{ fontSize: 18 }}>error_outline</span>
-            <span>{t(errorKey)}</span>
+            <span>{t(visibleError)}</span>
           </div>
         )}
 
@@ -153,6 +180,19 @@ function App() {
         {/* Color palette */}
         <ColorPalette colors={colors} isLoading={isLoading} rgbToHex={rgbToHex} />
       </main>
+
+      <footer className="mt-auto border-t border-gray-200 dark:border-gray-800 py-6 bg-white/70 dark:bg-gray-900/70">
+        <div className="max-w-5xl mx-auto px-4 text-center">
+          <a
+            href="https://litt.ly/chichiboo"
+            target="_blank"
+            rel="noreferrer"
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+          >
+            Created by. 교육뮤지컬 꿈꾸는 치수쌤
+          </a>
+        </div>
+      </footer>
 
     </div>
   )
