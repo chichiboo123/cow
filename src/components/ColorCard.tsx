@@ -1,18 +1,23 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { RGBColor } from '../hooks/useColorExtraction'
+import { rgbToCmyk, rgbToPantoneApprox, type ExtractedColor } from '../hooks/useColorExtraction'
 
 interface ColorCardProps {
-  color: RGBColor
+  color: ExtractedColor
   rgbToHex: (r: number, g: number, b: number) => string
+  showExtended: boolean
+  isActive?: boolean
+  onSelect?: (color: ExtractedColor) => void
 }
 
-export function ColorCard({ color, rgbToHex }: ColorCardProps) {
+export function ColorCard({ color, rgbToHex, showExtended, isActive = false, onSelect }: ColorCardProps) {
   const { t } = useTranslation()
   const [copiedType, setCopiedType] = useState<'hex' | 'rgb' | null>(null)
 
   const hex = rgbToHex(color.r, color.g, color.b)
   const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`
+  const cmyk = rgbToCmyk(color.r, color.g, color.b)
+  const pantoneApprox = rgbToPantoneApprox(color.r, color.g, color.b)
 
   // Determine text color based on luminance
   const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255
@@ -41,8 +46,9 @@ export function ColorCard({ color, rgbToHex }: ColorCardProps) {
 
   return (
     <div
-      className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end"
+      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end cursor-pointer border-2 ${isActive ? 'border-violet-400' : 'border-transparent'}`}
       style={{ backgroundColor: hex }}
+      onClick={() => onSelect?.(color)}
     >
       {/* Color info overlay */}
       <div className="p-3 flex flex-col gap-1">
@@ -52,9 +58,26 @@ export function ColorCard({ color, rgbToHex }: ColorCardProps) {
         <span className={`text-xs leading-tight ${textClass} opacity-80`}>
           {rgb}
         </span>
+        <span className={`text-xs leading-tight ${textClass} opacity-90`}>
+          {t('percentage')}: {color.percentage.toFixed(2)}%
+        </span>
+        {showExtended && (
+          <>
+            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
+              CMYK: {cmyk.c}% {cmyk.m}% {cmyk.y}% {cmyk.k}%
+            </span>
+            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
+              {t('pantoneApprox')}: {pantoneApprox}
+            </span>
+          </>
+        )}
         <div className="flex gap-1 mt-1">
           <button
-            onClick={() => copy(hex, 'hex')}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              copy(hex, 'hex')
+            }}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
@@ -63,7 +86,11 @@ export function ColorCard({ color, rgbToHex }: ColorCardProps) {
             <span>{copiedType === 'hex' ? t('copied') : t('copyHex')}</span>
           </button>
           <button
-            onClick={() => copy(rgb, 'rgb')}
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation()
+              copy(rgb, 'rgb')
+            }}
             className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
