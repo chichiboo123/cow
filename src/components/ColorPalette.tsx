@@ -8,11 +8,10 @@ interface ColorPaletteProps {
   colors: ExtractedColor[]
   isLoading: boolean
   rgbToHex: (r: number, g: number, b: number) => string
-  selectedColorHex: string | null
-  onColorSelect: (color: ExtractedColor) => void
+  onColorSelect?: (color: ExtractedColor) => void
 }
 
-export function ColorPalette({ colors, isLoading, rgbToHex, selectedColorHex, onColorSelect }: ColorPaletteProps) {
+export function ColorPalette({ colors, isLoading, rgbToHex, onColorSelect }: ColorPaletteProps) {
   const { t } = useTranslation()
   const [sortMode, setSortMode] = useState<'percentage' | 'similar'>('percentage')
   const [showExtended, setShowExtended] = useState(false)
@@ -49,7 +48,7 @@ export function ColorPalette({ colors, isLoading, rgbToHex, selectedColorHex, on
       setModalColor(color)
       return
     }
-    onColorSelect(color)
+    onColorSelect?.(color)
   }
 
   return (
@@ -68,20 +67,22 @@ export function ColorPalette({ colors, isLoading, rgbToHex, selectedColorHex, on
             <option value="similar">{t('sortBySimilar')}</option>
           </select>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowExtended(v => !v)}
-          className="h-9 px-3 rounded-lg text-sm font-semibold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors"
-        >
-          {showExtended ? t('hideExtended') : t('showExtended')}
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsCardMode(v => !v)}
-          className={`h-9 px-3 rounded-lg text-sm font-semibold transition-colors ${isCardMode ? 'text-white bg-violet-600 hover:bg-violet-700' : 'text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60'}`}
-        >
-          {isCardMode ? t('cardModeOn') : t('cardMaker')}
-        </button>
+        <div className="flex items-center justify-end gap-2 sm:ml-auto">
+          <button
+            type="button"
+            onClick={() => setShowExtended(v => !v)}
+            className="h-9 px-3 rounded-lg text-sm font-semibold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors"
+          >
+            {showExtended ? t('hideExtended') : t('showExtended')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsCardMode(v => !v)}
+            className={`h-9 px-3 rounded-lg text-sm font-semibold transition-colors ${isCardMode ? 'text-white bg-violet-600 hover:bg-violet-700' : 'text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60'}`}
+          >
+            {isCardMode ? t('cardModeOn') : t('cardMaker')}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 w-full">
@@ -92,7 +93,6 @@ export function ColorPalette({ colors, isLoading, rgbToHex, selectedColorHex, on
             rgbToHex={rgbToHex}
             showExtended={showExtended}
             onSelect={handleColorPick}
-            isActive={rgbToHex(color.r, color.g, color.b) === selectedColorHex}
           />
         ))}
       </div>

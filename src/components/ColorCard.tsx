@@ -6,11 +6,10 @@ interface ColorCardProps {
   color: ExtractedColor
   rgbToHex: (r: number, g: number, b: number) => string
   showExtended: boolean
-  isActive?: boolean
   onSelect?: (color: ExtractedColor) => void
 }
 
-export function ColorCard({ color, rgbToHex, showExtended, isActive = false, onSelect }: ColorCardProps) {
+export function ColorCard({ color, rgbToHex, showExtended, onSelect }: ColorCardProps) {
   const { t } = useTranslation()
   const [copiedType, setCopiedType] = useState<'hex' | 'rgb' | null>(null)
 
@@ -46,7 +45,7 @@ export function ColorCard({ color, rgbToHex, showExtended, isActive = false, onS
 
   return (
     <div
-      className={`relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end cursor-pointer border-2 ${isActive ? 'border-violet-400' : 'border-transparent'}`}
+      className="relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 aspect-square flex flex-col justify-end cursor-pointer border-2 border-transparent"
       style={{ backgroundColor: hex }}
       onClick={() => onSelect?.(color)}
     >

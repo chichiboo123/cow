@@ -57,8 +57,6 @@ function App() {
     setPreviewUrl(null)
     setCurrentImg(null)
     setErrorKey(null)
-    setFocusedPreviewUrl(null)
-    setSelectedColorHex(null)
     setNumColors(8)
     reset()
   }, [reset])
@@ -68,46 +66,6 @@ function App() {
   }, [])
 
   const visibleError = errorKey ?? error
-  const displayPreviewUrl = focusedPreviewUrl ?? previewUrl
-
-  const handleColorSelect = useCallback((color: ExtractedColor) => {
-    if (!currentImg) return
-
-    const hex = rgbToHex(color.r, color.g, color.b)
-    if (selectedColorHex === hex) {
-      setSelectedColorHex(null)
-      setFocusedPreviewUrl(null)
-      return
-    }
-
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d', { willReadFrequently: true })
-    if (!ctx) return
-
-    canvas.width = currentImg.naturalWidth
-    canvas.height = currentImg.naturalHeight
-    ctx.drawImage(currentImg, 0, 0, canvas.width, canvas.height)
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    const data = imageData.data
-
-    const threshold = 70
-    for (let i = 0; i < data.length; i += 4) {
-      const dr = data[i] - color.r
-      const dg = data[i + 1] - color.g
-      const db = data[i + 2] - color.b
-      const distance = Math.sqrt(dr * dr + dg * dg + db * db)
-      if (distance > threshold) {
-        const gray = Math.round(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2])
-        data[i] = gray
-        data[i + 1] = gray
-        data[i + 2] = gray
-      }
-    }
-
-    ctx.putImageData(imageData, 0, 0)
-    setSelectedColorHex(hex)
-    setFocusedPreviewUrl(canvas.toDataURL('image/png'))
-  }, [currentImg, rgbToHex, selectedColorHex])
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
@@ -230,8 +188,7 @@ function App() {
           colors={colors}
           isLoading={isLoading}
           rgbToHex={rgbToHex}
-          selectedColorHex={selectedColorHex}
-          onColorSelect={handleColorSelect}
+          onColorSelect={() => {}}
         />
       </main>
 

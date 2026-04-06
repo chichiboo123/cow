@@ -23,6 +23,7 @@ export function CardMakerModal({ color, isOpen, onClose }: CardMakerModalProps) 
   const [fontSize, setFontSize] = useState(34)
   const [textColor, setTextColor] = useState('#FFFFFF')
   const [position, setPosition] = useState({ x: 50, y: 50 })
+  const [isDragging, setIsDragging] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const dragState = useRef<{ offsetX: number, offsetY: number } | null>(null)
 
@@ -34,8 +35,11 @@ export function CardMakerModal({ color, isOpen, onClose }: CardMakerModalProps) 
   if (!isOpen || !color) return null
 
   const startDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    event.preventDefault()
     const rect = cardRef.current?.getBoundingClientRect()
     if (!rect) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setIsDragging(true)
     dragState.current = {
       offsetX: event.clientX - rect.left - (rect.width * position.x / 100),
       offsetY: event.clientY - rect.top - (rect.height * position.y / 100),
@@ -54,6 +58,7 @@ export function CardMakerModal({ color, isOpen, onClose }: CardMakerModalProps) 
 
   const endDrag = () => {
     dragState.current = null
+    setIsDragging(false)
   }
 
   return (
@@ -108,7 +113,7 @@ export function CardMakerModal({ color, isOpen, onClose }: CardMakerModalProps) 
               onPointerLeave={endDrag}
             >
               <div
-                className="absolute cursor-grab active:cursor-grabbing select-none whitespace-pre-wrap break-words px-2 text-center"
+                className={`absolute select-none px-2 text-center ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 onPointerDown={startDrag}
                 style={{
                   left: `${position.x}%`,
@@ -119,6 +124,8 @@ export function CardMakerModal({ color, isOpen, onClose }: CardMakerModalProps) 
                   fontSize: `${fontSize}px`,
                   lineHeight: 1.25,
                   maxWidth: '90%',
+                  whiteSpace: 'pre',
+                  touchAction: 'none',
                 }}
               >
                 {text}
