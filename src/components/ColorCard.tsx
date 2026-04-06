@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { rgbToCmyk, rgbToPantoneApprox, type ExtractedColor } from '../hooks/useColorExtraction'
+import { rgbToCmyk, type ExtractedColor } from '../hooks/useColorExtraction'
 
 interface ColorCardProps {
   color: ExtractedColor
@@ -16,7 +16,6 @@ export function ColorCard({ color, rgbToHex, showExtended, onSelect }: ColorCard
   const hex = rgbToHex(color.r, color.g, color.b)
   const rgb = `rgb(${color.r}, ${color.g}, ${color.b})`
   const cmyk = rgbToCmyk(color.r, color.g, color.b)
-  const pantoneApprox = rgbToPantoneApprox(color.r, color.g, color.b)
 
   // Determine text color based on luminance
   const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255
@@ -61,14 +60,9 @@ export function ColorCard({ color, rgbToHex, showExtended, onSelect }: ColorCard
           {t('percentage')}: {color.percentage.toFixed(2)}%
         </span>
         {showExtended && (
-          <>
-            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
-              CMYK: {cmyk.c}% {cmyk.m}% {cmyk.y}% {cmyk.k}%
-            </span>
-            <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
-              {t('pantoneApprox')}: {pantoneApprox}
-            </span>
-          </>
+          <span className={`text-[11px] leading-tight ${textClass} opacity-90`}>
+            CMYK: {cmyk.c}% {cmyk.m}% {cmyk.y}% {cmyk.k}%
+          </span>
         )}
         <div className="flex gap-1 mt-1">
           <button
@@ -77,12 +71,12 @@ export function ColorCard({ color, rgbToHex, showExtended, onSelect }: ColorCard
               e.stopPropagation()
               copy(hex, 'hex')
             }}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
               {copiedType === 'hex' ? 'check' : 'content_copy'}
             </span>
-            <span>{copiedType === 'hex' ? t('copied') : t('copyHex')}</span>
+            <span>{copiedType === 'hex' ? '✓' : 'HEX'}</span>
           </button>
           <button
             type="button"
@@ -90,12 +84,12 @@ export function ColorCard({ color, rgbToHex, showExtended, onSelect }: ColorCard
               e.stopPropagation()
               copy(rgb, 'rgb')
             }}
-            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 ${btnClass}`}
+            className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all duration-150 whitespace-nowrap ${btnClass}`}
           >
             <span className="material-icons" style={{ fontSize: 12 }}>
               {copiedType === 'rgb' ? 'check' : 'content_copy'}
             </span>
-            <span>{copiedType === 'rgb' ? t('copied') : t('copyRgb')}</span>
+            <span>{copiedType === 'rgb' ? '✓' : 'RGB'}</span>
           </button>
         </div>
       </div>
