@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ImageUploader } from './components/ImageUploader'
 import { ColorPalette } from './components/ColorPalette'
 import { LanguageSwitcher } from './components/LanguageSwitcher'
-import { useColorExtraction, type ExtractedColor } from './hooks/useColorExtraction'
+import { useColorExtraction } from './hooks/useColorExtraction'
 
 function App() {
   const { t } = useTranslation()
@@ -14,8 +14,6 @@ function App() {
   })
   const [numColors, setNumColors] = useState(8)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [focusedPreviewUrl, setFocusedPreviewUrl] = useState<string | null>(null)
-  const [selectedColorHex, setSelectedColorHex] = useState<string | null>(null)
   const [currentImg, setCurrentImg] = useState<HTMLImageElement | null>(null)
   const [errorKey, setErrorKey] = useState<string | null>(null)
 
@@ -33,8 +31,6 @@ function App() {
   const handleImage = useCallback((img: HTMLImageElement) => {
     setCurrentImg(img)
     setErrorKey(null)
-    setFocusedPreviewUrl(null)
-    setSelectedColorHex(null)
     extractColors(img, numColors)
   }, [extractColors, numColors])
 
@@ -46,8 +42,6 @@ function App() {
   const handleNumColorsChange = (value: number) => {
     const clamped = Math.max(1, Math.min(20, value))
     setNumColors(clamped)
-    setSelectedColorHex(null)
-    setFocusedPreviewUrl(null)
     if (currentImg) {
       extractColors(currentImg, clamped)
     }
@@ -136,7 +130,7 @@ function App() {
         <ImageUploader
           onImage={handleImage}
           onError={handleError}
-          previewUrl={displayPreviewUrl}
+          previewUrl={previewUrl}
           setPreviewUrl={setPreviewUrl}
         />
 

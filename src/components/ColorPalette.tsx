@@ -11,7 +11,7 @@ interface ColorPaletteProps {
   onColorSelect?: (color: ExtractedColor) => void
 }
 
-export function ColorPalette({ colors, isLoading, rgbToHex, onColorSelect }: ColorPaletteProps) {
+export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps) {
   const { t } = useTranslation()
   const [sortMode, setSortMode] = useState<'percentage' | 'similar'>('percentage')
   const [showExtended, setShowExtended] = useState(false)
