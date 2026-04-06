@@ -188,7 +188,6 @@ function App() {
           colors={colors}
           isLoading={isLoading}
           rgbToHex={rgbToHex}
-          onColorSelect={() => {}}
         />
       </main>
 

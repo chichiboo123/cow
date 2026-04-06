@@ -46,9 +46,7 @@ export function ColorPalette({ colors, isLoading, rgbToHex, onColorSelect }: Col
   const handleColorPick = (color: ExtractedColor) => {
     if (isCardMode) {
       setModalColor(color)
-      return
     }
-    onColorSelect?.(color)
   }
 
   return (
