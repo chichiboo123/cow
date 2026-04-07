@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState, useCallback, type PointerEvent as ReactPointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ExtractedColor } from '../hooks/useColorExtraction'
+import { EMOJI_CATEGORIES } from './emojiData'
 
 interface CardMakerModalProps {
   colors: ExtractedColor[]
@@ -15,6 +16,7 @@ interface TextElement {
   fontSize: number
   textColor: string
   position: { x: number; y: number }
+  isEmoji?: boolean
 }
 
 type BgMode = 'horizontal' | 'vertical' | 'gradient-h' | 'gradient-v' | 'gradient-dl' | 'gradient-dr'
@@ -73,6 +75,18 @@ function createTextElement(overrides?: Partial<TextElement>): TextElement {
   }
 }
 
+function createEmojiElement(emoji: string): TextElement {
+  return {
+    id: makeId(),
+    text: emoji,
+    fontFamily: 'sans-serif',
+    fontSize: 48,
+    textColor: '#FFFFFF',
+    position: { x: 50, y: 30 + Math.random() * 40 },
+    isEmoji: true,
+  }
+}
+
 function buildBgStyle(colors: ExtractedColor[], mode: BgMode): React.CSSProperties {
   const hexes = colors.map(colorToHex)
   if (hexes.length === 0) return { backgroundColor: '#7C3AED' }
@@ -86,7 +100,6 @@ function buildBgStyle(colors: ExtractedColor[], mode: BgMode): React.CSSProperti
     return { background: `linear-gradient(${dir}, ${hexes.join(', ')})` }
   }
 
-  // Split mode — use CSS linear-gradient with hard stops
   const n = hexes.length
   const dir = mode === 'vertical' ? 'to bottom' : 'to right'
   const stops = hexes.flatMap((hex, i) => {
@@ -122,7 +135,6 @@ function drawBgToCanvas(ctx: CanvasRenderingContext2D, w: number, h: number, col
     return
   }
 
-  // Split mode
   const n = hexes.length
   for (let i = 0; i < n; i++) {
     ctx.fillStyle = hexes[i]
@@ -142,9 +154,11 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
   const { t } = useTranslation()
   const [textElements, setTextElements] = useState<TextElement[]>(() => [createTextElement()])
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
-  const [bgMode, setBgMode] = useState<BgMode>('horizontal')
+  const [bgMode, setBgMode] = useState<BgMode>('vertical')
   const [showColorCode, setShowColorCode] = useState(false)
   const [exportFeedback, setExportFeedback] = useState<'jpg' | 'clipboard' | null>(null)
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+  const [emojiCategory, setEmojiCategory] = useState(0)
   const cardRef = useRef<HTMLDivElement>(null)
   const dragState = useRef<{ elementId: string; offsetX: number; offsetY: number } | null>(null)
   const [draggingId, setDraggingId] = useState<string | null>(null)
@@ -172,6 +186,13 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
     setActiveElementId(el.id)
   }, [])
 
+  const addEmojiElement = useCallback((emoji: string) => {
+    const el = createEmojiElement(emoji)
+    setTextElements(prev => [...prev, el])
+    setActiveElementId(el.id)
+    setShowEmojiPicker(false)
+  }, [])
+
   const removeTextElement = useCallback((id: string) => {
     setTextElements(prev => {
       const next = prev.filter(el => el.id !== id)
@@ -191,7 +212,6 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
 
     drawBgToCanvas(ctx, width, height, colors, bgMode)
 
-    // Draw all text elements
     for (const el of textElements) {
       ctx.fillStyle = el.textColor
       ctx.font = `${el.fontSize * 2}px "${el.fontFamily}"`
@@ -321,9 +341,9 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4">
-          {/* Left panel: text elements editor */}
+          {/* Left panel */}
           <div className="space-y-3 min-w-0">
-            {/* Text element tabs */}
+            {/* Element tabs + add buttons */}
             <div className="flex items-center gap-2 flex-wrap">
               {textElements.map((el, i) => (
                 <button
@@ -332,7 +352,7 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
                   onClick={() => setActiveElementId(el.id)}
                   className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${activeElement?.id === el.id ? 'text-white bg-violet-600' : 'text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
                 >
-                  {t('textElement')} {i + 1}
+                  {el.isEmoji ? el.text : `${t('textElement')} ${i + 1}`}
                   {textElements.length > 1 && (
                     <span
                       className="material-icons ml-1 hover:text-red-400"
@@ -350,60 +370,122 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
                 <span className="material-icons" style={{ fontSize: 14 }}>add</span>
                 {t('addText')}
               </button>
+              <button
+                type="button"
+                onClick={() => setShowEmojiPicker(v => !v)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${showEmojiPicker ? 'text-white bg-amber-500' : 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 dark:hover:bg-amber-900/50'}`}
+              >
+                <span style={{ fontSize: 14 }}>😀</span>
+                {t('addEmoji')}
+              </button>
             </div>
+
+            {/* Emoji Picker */}
+            {showEmojiPicker && (
+              <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 space-y-2">
+                {/* Category tabs */}
+                <div className="flex gap-1 overflow-x-auto pb-1">
+                  {EMOJI_CATEGORIES.map((cat, i) => (
+                    <button
+                      key={cat.key}
+                      type="button"
+                      onClick={() => setEmojiCategory(i)}
+                      className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center text-lg transition-colors ${emojiCategory === i ? 'bg-violet-100 dark:bg-violet-900/50 ring-2 ring-violet-400' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      title={t(`emoji_${cat.key}`)}
+                    >
+                      {cat.icon}
+                    </button>
+                  ))}
+                </div>
+                {/* Emoji grid */}
+                <div className="grid grid-cols-10 sm:grid-cols-12 gap-0.5 max-h-48 overflow-y-auto">
+                  {EMOJI_CATEGORIES[emojiCategory].emojis.map((emoji, i) => (
+                    <button
+                      key={`${emoji}-${i}`}
+                      type="button"
+                      onClick={() => addEmojiElement(emoji)}
+                      className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-lg transition-colors"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Active element editor */}
             {activeElement && (
               <div className="space-y-3 p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('cardText')}
-                  <textarea
-                    value={activeElement.text}
-                    onChange={e => updateElement(activeElement.id, { text: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 min-h-20 text-sm"
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('font')}
-                    <select
-                      value={activeElement.fontFamily}
-                      onChange={e => updateElement(activeElement.id, { fontFamily: e.target.value })}
-                      className="mt-1 h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
-                    >
-                      {FONT_OPTIONS.map(option => (
-                        <option key={option} value={option} style={{ fontFamily: option }}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t('fontColor')}
-                    <input
-                      type="color"
-                      value={activeElement.textColor}
-                      onChange={e => updateElement(activeElement.id, { textColor: e.target.value })}
-                      className="mt-1 h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-1"
-                    />
-                  </label>
-                </div>
-                {/* Font preview */}
-                <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2">
-                  <span className="text-[11px] text-gray-400 dark:text-gray-500 block mb-1">{t('fontPreview')}</span>
-                  <span style={{ fontFamily: activeElement.fontFamily, fontSize: '20px' }} className="text-gray-800 dark:text-gray-200">
-                    가나다라 ABC 0123
-                  </span>
-                </div>
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
-                  {t('fontSize')}: {activeElement.fontSize}px
-                  <input
-                    type="range" min={14} max={72}
-                    value={activeElement.fontSize}
-                    onChange={e => updateElement(activeElement.id, { fontSize: Number(e.target.value) })}
-                    className="mt-2 w-full accent-violet-600"
-                  />
-                </label>
+                {activeElement.isEmoji ? (
+                  <>
+                    {/* Emoji element: size slider only */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{activeElement.text}</span>
+                      <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('emojiElement')}</span>
+                    </div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
+                      {t('fontSize')}: {activeElement.fontSize}px
+                      <input
+                        type="range" min={16} max={120}
+                        value={activeElement.fontSize}
+                        onChange={e => updateElement(activeElement.id, { fontSize: Number(e.target.value) })}
+                        className="mt-2 w-full accent-violet-600"
+                      />
+                    </label>
+                  </>
+                ) : (
+                  <>
+                    {/* Text element editor */}
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {t('cardText')}
+                      <textarea
+                        value={activeElement.text}
+                        onChange={e => updateElement(activeElement.id, { text: e.target.value })}
+                        className="mt-1 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 min-h-20 text-sm"
+                      />
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t('font')}
+                        <select
+                          value={activeElement.fontFamily}
+                          onChange={e => updateElement(activeElement.id, { fontFamily: e.target.value })}
+                          className="mt-1 h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-2 text-sm"
+                        >
+                          {FONT_OPTIONS.map(option => (
+                            <option key={option} value={option} style={{ fontFamily: option }}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        {t('fontColor')}
+                        <input
+                          type="color"
+                          value={activeElement.textColor}
+                          onChange={e => updateElement(activeElement.id, { textColor: e.target.value })}
+                          className="mt-1 h-10 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-1"
+                        />
+                      </label>
+                    </div>
+                    <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2">
+                      <span className="text-[11px] text-gray-400 dark:text-gray-500 block mb-1">{t('fontPreview')}</span>
+                      <span style={{ fontFamily: activeElement.fontFamily, fontSize: '20px' }} className="text-gray-800 dark:text-gray-200">
+                        가나다라 ABC 0123
+                      </span>
+                    </div>
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300 block">
+                      {t('fontSize')}: {activeElement.fontSize}px
+                      <input
+                        type="range" min={14} max={72}
+                        value={activeElement.fontSize}
+                        onChange={e => updateElement(activeElement.id, { fontSize: Number(e.target.value) })}
+                        className="mt-2 w-full accent-violet-600"
+                      />
+                    </label>
+                  </>
+                )}
               </div>
             )}
 
@@ -460,7 +542,7 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
                     top: `${el.position.y}%`,
                     transform: 'translate(-50%, -50%)',
                     color: el.textColor,
-                    fontFamily: el.fontFamily,
+                    fontFamily: el.isEmoji ? undefined : el.fontFamily,
                     fontSize: `${el.fontSize}px`,
                     lineHeight: 1.25,
                     maxWidth: '90%',

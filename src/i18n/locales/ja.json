@@ -56,5 +56,16 @@
   "addText": "テキスト追加",
   "cardSelectHint": "カードに使う色を選択してください",
   "cardSelectedCount": "{{count}}色選択中",
-  "openCardMaker": "カード作成"
+  "openCardMaker": "カード作成",
+  "addEmoji": "絵文字追加",
+  "emojiElement": "絵文字",
+  "emoji_smileys": "表情",
+  "emoji_gestures": "ジェスチャー",
+  "emoji_animals": "動物・自然",
+  "emoji_food": "食べ物",
+  "emoji_travel": "旅行",
+  "emoji_activities": "アクティビティ",
+  "emoji_objects": "物",
+  "emoji_hearts": "ハート",
+  "emoji_symbols": "記号・旗"
 }
