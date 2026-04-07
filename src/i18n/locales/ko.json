@@ -56,5 +56,16 @@
   "addText": "문구 추가",
   "cardSelectHint": "카드에 사용할 색상을 선택하세요",
   "cardSelectedCount": "{{count}}개 색상 선택됨",
-  "openCardMaker": "카드 만들기"
+  "openCardMaker": "카드 만들기",
+  "addEmoji": "이모지 추가",
+  "emojiElement": "이모지",
+  "emoji_smileys": "표정",
+  "emoji_gestures": "제스처",
+  "emoji_animals": "동물·자연",
+  "emoji_food": "음식",
+  "emoji_travel": "여행",
+  "emoji_activities": "활동",
+  "emoji_objects": "사물",
+  "emoji_hearts": "하트",
+  "emoji_symbols": "기호·깃발"
 }

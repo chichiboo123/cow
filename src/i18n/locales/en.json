@@ -56,5 +56,16 @@
   "addText": "Add text",
   "cardSelectHint": "Select colors for your card",
   "cardSelectedCount": "{{count}} color(s) selected",
-  "openCardMaker": "Make card"
+  "openCardMaker": "Make card",
+  "addEmoji": "Add emoji",
+  "emojiElement": "Emoji",
+  "emoji_smileys": "Smileys",
+  "emoji_gestures": "Gestures",
+  "emoji_animals": "Animals & Nature",
+  "emoji_food": "Food & Drink",
+  "emoji_travel": "Travel",
+  "emoji_activities": "Activities",
+  "emoji_objects": "Objects",
+  "emoji_hearts": "Hearts",
+  "emoji_symbols": "Symbols & Flags"
 }
