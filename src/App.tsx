@@ -12,7 +12,7 @@ function App() {
     if (saved !== null) return saved === 'true'
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
-  const [numColors, setNumColors] = useState(8)
+  const [numColors, setNumColors] = useState(3)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [currentImg, setCurrentImg] = useState<HTMLImageElement | null>(null)
   const [errorKey, setErrorKey] = useState<string | null>(null)
@@ -51,7 +51,7 @@ function App() {
     setPreviewUrl(null)
     setCurrentImg(null)
     setErrorKey(null)
-    setNumColors(8)
+    setNumColors(3)
     reset()
   }, [reset])
 
