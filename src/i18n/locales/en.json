@@ -43,5 +43,18 @@
   "downloadJpg": "Download JPG",
   "downloaded": "Downloaded!",
   "copyCardToClipboard": "Copy to clipboard",
-  "copiedToClipboard": "Copied!"
+  "copiedToClipboard": "Copied!",
+  "selectedColors": "Selected colors",
+  "bgLayout": "Background layout",
+  "bgHorizontal": "Horizontal split",
+  "bgVertical": "Vertical split",
+  "bgGradientH": "Gradient (H)",
+  "bgGradientV": "Gradient (V)",
+  "bgGradientDL": "Gradient ↘",
+  "bgGradientDR": "Gradient ↙",
+  "textElement": "Text",
+  "addText": "Add text",
+  "cardSelectHint": "Select colors for your card",
+  "cardSelectedCount": "{{count}} color(s) selected",
+  "openCardMaker": "Make card"
 }

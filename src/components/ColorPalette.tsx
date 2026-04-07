@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ColorCard } from './ColorCard'
 import { CardMakerModal } from './CardMakerModal'
@@ -8,7 +8,10 @@ interface ColorPaletteProps {
   colors: ExtractedColor[]
   isLoading: boolean
   rgbToHex: (r: number, g: number, b: number) => string
-  onColorSelect?: (color: ExtractedColor) => void
+}
+
+function isSameColor(a: ExtractedColor, b: ExtractedColor) {
+  return a.r === b.r && a.g === b.g && a.b === b.b
 }
 
 export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps) {
@@ -16,11 +19,11 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
   const [sortMode, setSortMode] = useState<'percentage' | 'similar'>('percentage')
   const [showExtended, setShowExtended] = useState(false)
   const [isCardMode, setIsCardMode] = useState(false)
-  const [modalColor, setModalColor] = useState<ExtractedColor | null>(null)
+  const [selectedColors, setSelectedColors] = useState<ExtractedColor[]>([])
+  const [modalOpen, setModalOpen] = useState(false)
 
   const sortedColors = useMemo(() => {
     const cloned = [...colors]
-
     if (sortMode === 'similar') {
       return cloned.sort((a, b) => {
         const byGroup = a.group.localeCompare(b.group)
@@ -28,9 +31,28 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
         return b.percentage - a.percentage
       })
     }
-
     return cloned.sort((a, b) => b.percentage - a.percentage)
   }, [colors, sortMode])
+
+  const handleColorPick = useCallback((color: ExtractedColor) => {
+    if (!isCardMode) return
+    setSelectedColors(prev => {
+      const idx = prev.findIndex(c => isSameColor(c, color))
+      if (idx >= 0) return prev.filter((_, i) => i !== idx)
+      return [...prev, color]
+    })
+  }, [isCardMode])
+
+  const toggleCardMode = useCallback(() => {
+    setIsCardMode(v => {
+      if (v) setSelectedColors([])
+      return !v
+    })
+  }, [])
+
+  const getSelectionIndex = useCallback((color: ExtractedColor) => {
+    return selectedColors.findIndex(c => isSameColor(c, color))
+  }, [selectedColors])
 
   if (isLoading) {
     return (
@@ -42,12 +64,6 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
   }
 
   if (colors.length === 0) return null
-
-  const handleColorPick = (color: ExtractedColor) => {
-    if (isCardMode) {
-      setModalColor(color)
-    }
-  }
 
   return (
     <div className="space-y-3">
@@ -75,13 +91,35 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
           </button>
           <button
             type="button"
-            onClick={() => setIsCardMode(v => !v)}
+            onClick={toggleCardMode}
             className={`h-9 px-3 rounded-lg text-sm font-semibold transition-colors ${isCardMode ? 'text-white bg-violet-600 hover:bg-violet-700' : 'text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60'}`}
           >
             {isCardMode ? t('cardModeOn') : t('cardMaker')}
           </button>
         </div>
       </div>
+
+      {/* Card mode hint + open button */}
+      {isCardMode && (
+        <div className="flex items-center justify-between gap-3 bg-violet-50 dark:bg-violet-950/40 rounded-xl border border-violet-200 dark:border-violet-800 p-3">
+          <div className="flex items-center gap-2">
+            <span className="material-icons text-violet-500" style={{ fontSize: 18 }}>touch_app</span>
+            <span className="text-sm text-violet-700 dark:text-violet-300">
+              {selectedColors.length === 0 ? t('cardSelectHint') : t('cardSelectedCount', { count: selectedColors.length })}
+            </span>
+          </div>
+          {selectedColors.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              className="h-9 px-4 rounded-lg text-sm font-semibold text-white bg-violet-600 hover:bg-violet-700 transition-colors flex items-center gap-1"
+            >
+              <span className="material-icons" style={{ fontSize: 16 }}>edit</span>
+              {t('openCardMaker')}
+            </button>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 w-full">
         {sortedColors.map((color, i) => (
@@ -91,10 +129,17 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
             rgbToHex={rgbToHex}
             showExtended={showExtended}
             onSelect={handleColorPick}
+            selectionIndex={isCardMode ? getSelectionIndex(color) : undefined}
           />
         ))}
       </div>
-      <CardMakerModal color={modalColor} isOpen={modalColor !== null} onClose={() => setModalColor(null)} />
+
+      <CardMakerModal
+        colors={selectedColors}
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        rgbToHex={rgbToHex}
+      />
     </div>
   )
 }

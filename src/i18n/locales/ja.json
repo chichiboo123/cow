@@ -43,5 +43,18 @@
   "downloadJpg": "JPGダウンロード",
   "downloaded": "ダウンロード完了！",
   "copyCardToClipboard": "クリップボードにコピー",
-  "copiedToClipboard": "コピー完了！"
+  "copiedToClipboard": "コピー完了！",
+  "selectedColors": "選択された色",
+  "bgLayout": "背景レイアウト",
+  "bgHorizontal": "横分割",
+  "bgVertical": "縦分割",
+  "bgGradientH": "グラデーション(横)",
+  "bgGradientV": "グラデーション(縦)",
+  "bgGradientDL": "グラデーション↘",
+  "bgGradientDR": "グラデーション↙",
+  "textElement": "テキスト",
+  "addText": "テキスト追加",
+  "cardSelectHint": "カードに使う色を選択してください",
+  "cardSelectedCount": "{{count}}色選択中",
+  "openCardMaker": "カード作成"
 }
