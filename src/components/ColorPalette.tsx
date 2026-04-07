@@ -138,7 +138,6 @@ export function ColorPalette({ colors, isLoading, rgbToHex }: ColorPaletteProps)
         colors={selectedColors}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        rgbToHex={rgbToHex}
       />
     </div>
   )
