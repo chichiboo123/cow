@@ -6,7 +6,6 @@ interface CardMakerModalProps {
   colors: ExtractedColor[]
   isOpen: boolean
   onClose: () => void
-  rgbToHex: (r: number, g: number, b: number) => string
 }
 
 interface TextElement {
@@ -51,15 +50,6 @@ const BG_MODE_OPTIONS: { value: BgMode; labelKey: string }[] = [
 
 function colorToHex(c: ExtractedColor): string {
   return `#${[c.r, c.g, c.b].map(v => v.toString(16).padStart(2, '0')).join('')}`.toUpperCase()
-}
-
-function colorToRgb(c: ExtractedColor): string {
-  return `rgb(${c.r}, ${c.g}, ${c.b})`
-}
-
-function getReadableColor(r: number, g: number, b: number): string {
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
-  return luminance > 0.5 ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.55)'
 }
 
 function avgLuminance(colors: ExtractedColor[]): number {
@@ -148,7 +138,7 @@ function drawBgToCanvas(ctx: CanvasRenderingContext2D, w: number, h: number, col
   }
 }
 
-export function CardMakerModal({ colors, isOpen, onClose, rgbToHex }: CardMakerModalProps) {
+export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps) {
   const { t } = useTranslation()
   const [textElements, setTextElements] = useState<TextElement[]>(() => [createTextElement()])
   const [activeElementId, setActiveElementId] = useState<string | null>(null)
