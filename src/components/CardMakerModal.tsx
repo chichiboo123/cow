@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, useCallback, type PointerEvent as ReactPointerEvent } from 'react'
+import { useMemo, useRef, useState, useCallback, useEffect, type PointerEvent as ReactPointerEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ExtractedColor } from '../hooks/useColorExtraction'
 import { EMOJI_CATEGORIES } from './emojiData'
@@ -124,7 +124,8 @@ function drawBgToCanvas(ctx: CanvasRenderingContext2D, w: number, h: number, col
   }
 
   if (mode.startsWith('gradient')) {
-    let x0 = 0, y0 = 0, x1 = w, y1 = 0
+    const y0 = 0
+    let x0 = 0, x1 = w, y1 = 0
     if (mode === 'gradient-v') { x1 = 0; y1 = h }
     else if (mode === 'gradient-dl') { x1 = w; y1 = h }
     else if (mode === 'gradient-dr') { x0 = w; x1 = 0; y1 = h }
@@ -175,6 +176,21 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
   }, [colors])
 
   const bgStyle = useMemo(() => buildBgStyle(colors, bgMode), [colors, bgMode])
+
+  // Lock background scroll and close on Escape while the modal is open
+  useEffect(() => {
+    if (!isOpen) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.addEventListener('keydown', onKeyDown)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [isOpen, onClose])
 
   const updateElement = useCallback((id: string, updates: Partial<TextElement>) => {
     setTextElements(prev => prev.map(el => el.id === id ? { ...el, ...updates } : el))
@@ -398,13 +414,13 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
                   ))}
                 </div>
                 {/* Emoji grid */}
-                <div className="grid grid-cols-10 sm:grid-cols-12 gap-0.5 max-h-48 overflow-y-auto">
+                <div className="grid grid-cols-8 sm:grid-cols-12 gap-0.5 max-h-48 overflow-y-auto">
                   {EMOJI_CATEGORIES[emojiCategory].emojis.map((emoji, i) => (
                     <button
                       key={`${emoji}-${i}`}
                       type="button"
                       onClick={() => addEmojiElement(emoji)}
-                      className="w-8 h-8 flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-lg transition-colors"
+                      className="w-full aspect-square flex items-center justify-center rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-lg transition-colors"
                     >
                       {emoji}
                     </button>
@@ -526,7 +542,7 @@ export function CardMakerModal({ colors, isOpen, onClose }: CardMakerModalProps)
           <div className="flex items-start justify-center">
             <div
               ref={cardRef}
-              className="relative w-72 sm:w-80 aspect-[3/4] rounded-2xl shadow-lg overflow-hidden"
+              className="relative w-72 max-w-full sm:w-80 aspect-[3/4] rounded-2xl shadow-lg overflow-hidden"
               style={bgStyle}
               onPointerMove={onDrag}
               onPointerUp={endDrag}

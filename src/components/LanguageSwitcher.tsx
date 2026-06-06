@@ -21,7 +21,7 @@ export function LanguageSwitcher() {
         id="lang-select"
         value={i18n.language}
         onChange={e => handleChange(e.target.value)}
-        className="h-9 min-w-[110px] rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 px-2"
+        className="h-9 w-[96px] sm:w-auto sm:min-w-[110px] max-w-[40vw] rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 px-2 shrink-0"
       >
         {LANGUAGES.map(lang => (
           <option key={lang.code} value={lang.code}>
