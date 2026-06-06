@@ -5,11 +5,25 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
   font-family: 'PretendardGOV Variable', 'Pretendard GOV', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Remove the grey tap flash on touch devices for a native feel */
+button,
+a,
+select,
+input,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
 }
 
 html.dark {

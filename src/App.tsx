@@ -65,44 +65,46 @@ function App() {
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-2">
           {/* Logo */}
           <button
             type="button"
             onClick={handleReload}
-            className="flex items-center gap-2 cursor-pointer"
+            className="flex items-center gap-2 cursor-pointer min-w-0 shrink"
             title={t('refreshPage')}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-pink-500 flex items-center justify-center shadow-sm shrink-0">
               <span className="material-icons text-white" style={{ fontSize: 18 }}>palette</span>
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-bold text-base sm:text-lg text-gray-900 dark:text-gray-100">
+            <div className="flex items-baseline gap-1.5 min-w-0">
+              <span className="hidden sm:inline font-bold text-base sm:text-lg text-gray-900 dark:text-gray-100 whitespace-nowrap">
                 {t('appPrimaryName')}
               </span>
-              <span className="font-semibold text-xs sm:text-sm bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+              <span className="font-semibold text-sm sm:text-sm bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent whitespace-nowrap">
                 {t('appSecondaryName')}
               </span>
             </div>
           </button>
 
           {/* Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <LanguageSwitcher />
             <button
               type="button"
               onClick={handleReset}
               title={t('reset')}
-              className="px-3 h-9 rounded-lg flex items-center justify-center gap-1 text-xs sm:text-sm font-semibold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors"
+              aria-label={t('reset')}
+              className="w-9 sm:w-auto px-0 sm:px-3 h-9 rounded-lg flex items-center justify-center gap-1 text-sm font-semibold text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-900/40 hover:bg-violet-200 dark:hover:bg-violet-900/60 transition-colors shrink-0"
             >
               <span className="material-icons" style={{ fontSize: 18 }}>restart_alt</span>
-              <span>{t('reset')}</span>
+              <span className="hidden sm:inline">{t('reset')}</span>
             </button>
             <button
               type="button"
               onClick={() => setDarkMode(d => !d)}
               title={darkMode ? t('lightMode') : t('darkMode')}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label={darkMode ? t('lightMode') : t('darkMode')}
+              className="w-9 h-9 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0"
             >
               <span className="material-icons" style={{ fontSize: 20 }}>
                 {darkMode ? 'light_mode' : 'dark_mode'}
@@ -154,6 +156,7 @@ function App() {
               </div>
               <input
                 type="number"
+                inputMode="numeric"
                 min={1}
                 max={20}
                 value={numColors}
